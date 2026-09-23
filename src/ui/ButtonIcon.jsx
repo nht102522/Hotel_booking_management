@@ -1,21 +1,13 @@
-import styled from "styled-components";
+import { forwardRef } from "react";
 
-const ButtonIcon = styled.button`
-  background: none;
-  border: none;
-  padding: 0.6rem;
-  border-radius: var(--border-radius-sm);
-  transition: all 0.2s;
-
-  &:hover {
-    background-color: var(--color-grey-100);
-  }
-
-  & svg {
-    width: 2.2rem;
-    height: 2.2rem;
-    color: var(--color-brand-600);
-  }
-`;
+const ButtonIcon = forwardRef(function ButtonIcon({ className = "", ...props }, ref) {
+  return (
+    <button
+      ref={ref}
+      className={`rounded-[var(--border-radius-sm)] border-0 bg-transparent p-[0.6rem] transition-colors hover:bg-grey-100 [&_svg]:h-[2.2rem] [&_svg]:w-[2.2rem] [&_svg]:text-brand-600 ${className}`}
+      {...props}
+    />
+  );
+});
 
 export default ButtonIcon;

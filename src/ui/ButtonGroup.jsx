@@ -1,9 +1,5 @@
-import styled from 'styled-components';
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 1.2rem;
-  justify-content: flex-end;
-`;
+function ButtonGroup({ className = "", ...props }) {
+  return <div className={`flex justify-end gap-[1.2rem] ${className}`} {...props} />;
+}
 
 export default ButtonGroup;

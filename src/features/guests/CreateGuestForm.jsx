@@ -8,11 +8,6 @@ import FormRow from 'ui/FormRow';
 import Input from 'ui/Input';
 import Select from 'ui/Select';
 import Button from 'ui/Button';
-import styled from 'styled-components';
-
-const FormSelect = styled(Select)`
-  width: 100%;
-`;
 
 // With NEW modal
 // function CreateGuest({ onSuccessNewGuest, setIsOpenForm }) {
@@ -82,7 +77,8 @@ function CreateGuestForm({ onSuccessNewGuest, closeModal }) {
       </FormRow>
 
       <FormRow label='Nationality' error={errors?.nationality?.message}>
-        <FormSelect
+        <Select
+          className='w-full'
           id='nationality'
           disabled={isCreating}
           options={[
@@ -90,7 +86,7 @@ function CreateGuestForm({ onSuccessNewGuest, closeModal }) {
             ...countryOptions,
           ]}
           {...register('nationality', { required: 'This field is required' })}
-        ></FormSelect>
+        />
       </FormRow>
 
       <FormRow label='National ID' error={errors?.nationalID?.message}>

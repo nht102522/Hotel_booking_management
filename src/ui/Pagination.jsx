@@ -1,57 +1,29 @@
-import styled from "styled-components";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 
-const StyledPagination = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
+const buttonClass =
+  "flex items-center justify-center gap-[0.4rem] rounded-[var(--border-radius-sm)] border-0 bg-grey-50 px-[1.2rem] py-[0.6rem] text-[1.4rem] font-medium transition-colors hover:not-disabled:bg-brand-600 hover:not-disabled:text-brand-50 [&_svg]:h-[1.8rem] [&_svg]:w-[1.8rem]";
 
-const P = styled.p`
-  font-size: 1.4rem;
-  margin-left: 0.8rem;
+function Pagination({ count, page = 1, pageSize = 10, onPageChange }) {
+  const pageCount = Math.ceil(count / pageSize);
+  if (pageCount <= 1) return null;
 
-  & span {
-    font-weight: 600;
-  }
-`;
+  return (
+    <div className="flex w-full items-center justify-between">
+      <p className="ml-[0.8rem] text-[1.4rem]">
+        Showing <span className="font-semibold">{(page - 1) * pageSize + 1}</span> to{" "}
+        <span className="font-semibold">{Math.min(page * pageSize, count)}</span> of{" "}
+        <span className="font-semibold">{count}</span> results
+      </p>
+      <div className="flex gap-[0.6rem]">
+        <button className={`${buttonClass} pl-[0.4rem]`} disabled={page === 1} onClick={() => onPageChange?.(page - 1)}>
+          <HiChevronLeft /> <span>Previous</span>
+        </button>
+        <button className={`${buttonClass} pr-[0.4rem]`} disabled={page === pageCount} onClick={() => onPageChange?.(page + 1)}>
+          <span>Next</span> <HiChevronRight />
+        </button>
+      </div>
+    </div>
+  );
+}
 
-const Buttons = styled.div`
-  display: flex;
-  gap: 0.6rem;
-`;
-
-const PaginationButton = styled.button`
-  background-color: ${(props) =>
-    props.active ? " var(--color-brand-600)" : "var(--color-grey-50)"};
-  color: ${(props) => (props.active ? " var(--color-brand-50)" : "inherit")};
-  border: none;
-  border-radius: var(--border-radius-sm);
-  font-weight: 500;
-  font-size: 1.4rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1.2rem;
-  transition: all 0.3s;
-
-  &:has(span:last-child) {
-    padding-left: 0.4rem;
-  }
-
-  &:has(span:first-child) {
-    padding-right: 0.4rem;
-  }
-
-  & svg {
-    height: 1.8rem;
-    width: 1.8rem;
-  }
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-brand-600);
-    color: var(--color-brand-50);
-  }
-`;
+export default Pagination;

@@ -1,35 +1,33 @@
-import styled, { css } from "styled-components";
+const filterClass =
+  "flex gap-[0.4rem] rounded-[var(--border-radius-sm)] border border-grey-100 bg-grey-0 p-[0.4rem] shadow-[var(--shadow-sm)]";
 
-const StyledFilter = styled.div`
-  border: 1px solid var(--color-grey-100);
-  background-color: var(--color-grey-0);
-  box-shadow: var(--shadow-sm);
-  border-radius: var(--border-radius-sm);
-  padding: 0.4rem;
-  display: flex;
-  gap: 0.4rem;
-`;
+const buttonClass =
+  "rounded-[var(--border-radius-sm)] border-0 px-[0.8rem] py-[0.44rem] text-[1.4rem] font-medium transition-colors hover:not-disabled:bg-brand-600 hover:not-disabled:text-brand-50";
 
-const FilterButton = styled.button`
-  background-color: var(--color-grey-0);
-  border: none;
+function FilterButton({ active, className = "", ...props }) {
+  return (
+    <button
+      className={`${buttonClass} ${active ? "bg-brand-600 text-brand-50" : "bg-grey-0"} ${className}`}
+      {...props}
+    />
+  );
+}
 
-  ${(props) =>
-    props.active &&
-    css`
-      background-color: var(--color-brand-600);
-      color: var(--color-brand-50);
-    `}
+function Filter({ filterField, options = [], currentFilter, onFilter }) {
+  return (
+    <div className={filterClass}>
+      {options.map((option) => (
+        <FilterButton
+          key={option.value}
+          active={option.value === currentFilter}
+          disabled={option.value === currentFilter}
+          onClick={() => onFilter?.(filterField, option.value)}
+        >
+          {option.label}
+        </FilterButton>
+      ))}
+    </div>
+  );
+}
 
-  border-radius: var(--border-radius-sm);
-  font-weight: 500;
-  font-size: 1.4rem;
-  /* To give the same height as select */
-  padding: 0.44rem 0.8rem;
-  transition: all 0.3s;
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-brand-600);
-    color: var(--color-brand-50);
-  }
-`;
+export default Filter;

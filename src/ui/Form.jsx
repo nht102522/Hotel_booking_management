@@ -1,25 +1,17 @@
-import styled, { css } from "styled-components";
+import { forwardRef } from "react";
 
-const Form = styled.form`
-  ${(props) =>
-    props.type !== "modal" &&
-    css`
-      padding: 2.4rem 4rem;
+const Form = forwardRef(function Form({ type, className = "", ...props }, ref) {
+  const layoutClasses = type === "modal"
+    ? "w-[80rem]"
+    : "rounded-[var(--border-radius-md)] border border-grey-100 bg-grey-0 px-[4rem] py-[2.4rem]";
 
-      /* Box */
-      background-color: var(--color-grey-0);
-      border: 1px solid var(--color-grey-100);
-      border-radius: var(--border-radius-md);
-    `}
-
-  ${(props) =>
-    props.type === "modal" &&
-    css`
-      width: 80rem;
-    `}
-    
-  overflow: hidden;
-  font-size: 1.4rem;
-`;
+  return (
+    <form
+      ref={ref}
+      className={`overflow-hidden text-[1.4rem] ${layoutClasses} ${className}`}
+      {...props}
+    />
+  );
+});
 
 export default Form;

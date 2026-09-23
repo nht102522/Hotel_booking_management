@@ -1,16 +1,10 @@
-import styled from "styled-components";
-
-const DashboardBox = styled.div`
-  /* Box */
-  background-color: var(--color-grey-0);
-  border: 1px solid var(--color-grey-100);
-  border-radius: var(--border-radius-md);
-
-  padding: 3.2rem;
-
-  display: flex;
-  flex-direction: column;
-  gap: 2.4rem;
-`;
+function DashboardBox({ className = "", ...props }) {
+  return (
+    <div
+      className={`flex flex-col gap-[2.4rem] rounded-[var(--border-radius-md)] border border-grey-100 bg-grey-0 p-[3.2rem] ${className}`}
+      {...props}
+    />
+  );
+}
 
 export default DashboardBox;

@@ -1,32 +1,7 @@
-import styled from 'styled-components';
 import { useGuests } from 'features/guests/useGuests';
 import Pagination from 'ui/Pagination';
 import Spinner from 'ui/Spinner';
 import GuestListItem from './GuestListItem';
-
-const StyledGuestList = styled.div`
-  border: 1px solid var(--color-grey-200);
-  border-top: none;
-  border-bottom-left-radius: var(--border-radius-md);
-  border-bottom-right-radius: var(--border-radius-md);
-  overflow: hidden;
-  padding-top: 0.8rem;
-  transform: translateY(-4px);
-`;
-
-const List = styled.ul``;
-
-const PaginationContainer = styled.div`
-  border-top: 1px solid var(--color-grey-100);
-  background-color: var(--color-grey-50);
-  display: flex;
-  justify-content: center;
-  padding: 0.8rem;
-
-  &:not(:has(*)) {
-    display: none;
-  }
-`;
 
 function GuestList({ onClick }) {
   const { isLoading, guests, count } = useGuests();
@@ -36,8 +11,8 @@ function GuestList({ onClick }) {
   if (count === 0) return <p>No guests found...</p>;
 
   return (
-    <StyledGuestList>
-      <List>
+    <div className="-translate-y-[4px] overflow-hidden rounded-b-[var(--border-radius-md)] border border-t-0 border-grey-200 pt-[0.8rem]">
+      <ul>
         {guests.map((guest) => (
           <GuestListItem
             key={guest.id}
@@ -46,12 +21,12 @@ function GuestList({ onClick }) {
             onClick={onClick ? onClick : () => {}}
           />
         ))}
-      </List>
+      </ul>
 
-      <PaginationContainer>
+      <div className="flex justify-center border-t border-grey-100 bg-grey-50 p-[0.8rem] empty:hidden">
         <Pagination count={count} />
-      </PaginationContainer>
-    </StyledGuestList>
+      </div>
+    </div>
   );
 }
 

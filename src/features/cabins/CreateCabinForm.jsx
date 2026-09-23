@@ -1,87 +1,51 @@
-import styled from "styled-components";
-
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 
-const FormRow = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 24rem 1fr 1.2fr;
-  gap: 2.4rem;
-
-  padding: 1.2rem 0;
-
-  &:first-child {
-    padding-top: 0;
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-
-  &:has(button) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.2rem;
-  }
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-`;
-
-const Error = styled.span`
-  font-size: 1.4rem;
-  color: var(--color-red-700);
-`;
+const formRowClass = "grid grid-cols-[24rem_1fr_1.2fr] items-center gap-[2.4rem] py-[1.2rem] first:pt-0 last:pb-0 not-last:border-b not-last:border-grey-100 has-[button]:flex has-[button]:justify-end has-[button]:gap-[1.2rem]";
 
 function CreateCabinForm() {
   return (
     <Form>
-      <FormRow>
-        <Label htmlFor="name">Cabin name</Label>
+      <div className={formRowClass}>
+        <label className="font-medium" htmlFor="name">Cabin name</label>
         <Input type="text" id="name" />
-      </FormRow>
+      </div>
 
-      <FormRow>
-        <Label htmlFor="maxCapacity">Maximum capacity</Label>
+      <div className={formRowClass}>
+        <label className="font-medium" htmlFor="maxCapacity">Maximum capacity</label>
         <Input type="number" id="maxCapacity" />
-      </FormRow>
+      </div>
 
-      <FormRow>
-        <Label htmlFor="regularPrice">Regular price</Label>
+      <div className={formRowClass}>
+        <label className="font-medium" htmlFor="regularPrice">Regular price</label>
         <Input type="number" id="regularPrice" />
-      </FormRow>
+      </div>
 
-      <FormRow>
-        <Label htmlFor="discount">Discount</Label>
+      <div className={formRowClass}>
+        <label className="font-medium" htmlFor="discount">Discount</label>
         <Input type="number" id="discount" defaultValue={0} />
-      </FormRow>
+      </div>
 
-      <FormRow>
-        <Label htmlFor="description">Description for website</Label>
+      <div className={formRowClass}>
+        <label className="font-medium" htmlFor="description">Description for website</label>
         <Textarea type="number" id="description" defaultValue="" />
-      </FormRow>
+      </div>
 
-      <FormRow>
-        <Label htmlFor="image">Cabin photo</Label>
+      <div className={formRowClass}>
+        <label className="font-medium" htmlFor="image">Cabin photo</label>
         <FileInput id="image" accept="image/*" />
-      </FormRow>
+      </div>
 
-      <FormRow>
+      <div className={formRowClass}>
         {/* type is an HTML attribute! */}
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
         <Button>Edit cabin</Button>
-      </FormRow>
+      </div>
     </Form>
   );
 }

@@ -1,8 +1,11 @@
-import styled from "styled-components";
+import { forwardRef } from "react";
 
-export const Flag = styled.img`
-  max-width: 2rem;
-  border-radius: var(--border-radius-tiny);
-  display: block;
-  border: 1px solid var(--color-grey-100);
-`;
+export const Flag = forwardRef(function Flag({ className = "", ...props }, ref) {
+  return (
+    <img
+      ref={ref}
+      className={`block max-w-[2rem] rounded-[var(--border-radius-tiny)] border border-grey-100 ${className}`}
+      {...props}
+    />
+  );
+});

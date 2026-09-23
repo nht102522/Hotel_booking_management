@@ -1,62 +1,37 @@
-import styled from "styled-components";
+function Menu({ className = "", ...props }) {
+  return <div className={`flex items-center justify-end ${className}`} {...props} />;
+}
 
-const StyledMenu = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`;
+function Toggle({ className = "", ...props }) {
+  return (
+    <button
+      className={`translate-x-[0.8rem] rounded-[var(--border-radius-sm)] border-0 bg-transparent p-[0.4rem] transition-colors hover:bg-grey-100 [&_svg]:h-[2.4rem] [&_svg]:w-[2.4rem] [&_svg]:text-grey-700 ${className}`}
+      {...props}
+    />
+  );
+}
 
-const StyledToggle = styled.button`
-  background: none;
-  border: none;
-  padding: 0.4rem;
-  border-radius: var(--border-radius-sm);
-  transform: translateX(0.8rem);
-  transition: all 0.2s;
+function List({ position = { x: 0, y: 0 }, className = "", ...props }) {
+  return (
+    <ul
+      className={`fixed rounded-[var(--border-radius-md)] bg-grey-0 shadow-[var(--shadow-md)] ${className}`}
+      style={{ right: position.x, top: position.y }}
+      {...props}
+    />
+  );
+}
 
-  &:hover {
-    background-color: var(--color-grey-100);
-  }
+function MenuButton({ className = "", ...props }) {
+  return (
+    <button
+      className={`flex w-full items-center gap-[1.6rem] border-0 bg-transparent px-[2.4rem] py-[1.2rem] text-left text-[1.4rem] transition-colors hover:bg-grey-50 [&_svg]:h-[1.6rem] [&_svg]:w-[1.6rem] [&_svg]:text-grey-400 ${className}`}
+      {...props}
+    />
+  );
+}
 
-  & svg {
-    width: 2.4rem;
-    height: 2.4rem;
-    color: var(--color-grey-700);
-  }
-`;
+Menu.Toggle = Toggle;
+Menu.List = List;
+Menu.Button = MenuButton;
 
-const StyledList = styled.ul`
-  position: fixed;
-
-  background-color: var(--color-grey-0);
-  box-shadow: var(--shadow-md);
-  border-radius: var(--border-radius-md);
-
-  right: ${(props) => props.position.x}px;
-  top: ${(props) => props.position.y}px;
-`;
-
-const StyledButton = styled.button`
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: none;
-  padding: 1.2rem 2.4rem;
-  font-size: 1.4rem;
-  transition: all 0.2s;
-
-  display: flex;
-  align-items: center;
-  gap: 1.6rem;
-
-  &:hover {
-    background-color: var(--color-grey-50);
-  }
-
-  & svg {
-    width: 1.6rem;
-    height: 1.6rem;
-    color: var(--color-grey-400);
-    transition: all 0.3s;
-  }
-`;
+export default Menu;

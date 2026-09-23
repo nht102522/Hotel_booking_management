@@ -1,17 +1,9 @@
-import styled from "styled-components";
-
-const LoginLayout = styled.main`
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 48rem;
-  align-content: center;
-  justify-content: center;
-  gap: 3.2rem;
-  background-color: var(--color-grey-50);
-`;
-
 function Login() {
-  return <LoginLayout>Login</LoginLayout>;
+  return (
+    <main className="grid min-h-screen grid-cols-[48rem] content-center justify-center gap-[3.2rem] bg-grey-50">
+      Login
+    </main>
+  );
 }
 
 export default Login;

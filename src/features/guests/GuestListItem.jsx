@@ -1,37 +1,18 @@
-import styled from 'styled-components';
 import { Flag } from 'ui/Flag';
-
-const StyledGuestListItem = styled.li`
-  display: grid;
-  grid-template-columns: 2rem 2fr 1fr;
-  gap: 0.8rem;
-  align-items: center;
-  padding: 0.6rem 1.6rem;
-  transition: all 0.2s;
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-
-  &:hover {
-    background-color: var(--color-grey-50);
-    cursor: pointer;
-  }
-`;
-
-const ID = styled.div`
-  justify-self: right;
-  font-size: 1.2rem;
-  color: var(--color-grey-500);
-`;
 
 function GuestListItem({ guest, onClick }) {
   return (
-    <StyledGuestListItem onClick={() => onClick(guest)} role='button'>
+    <li
+      className="grid cursor-pointer grid-cols-[2rem_2fr_1fr] items-center gap-[0.8rem] px-[1.6rem] py-[0.6rem] transition-colors not-last:border-b not-last:border-grey-100 hover:bg-grey-50"
+      onClick={() => onClick(guest)}
+      role='button'
+    >
       <Flag src={guest.countryFlag} alt={`Flag of ${guest.nationality}`} />
       <div>{guest.fullName}</div>
-      <ID>ID: {guest.nationalID}</ID>
-    </StyledGuestListItem>
+      <div className="justify-self-end text-[1.2rem] text-grey-500">
+        ID: {guest.nationalID}
+      </div>
+    </li>
   );
 }
 
