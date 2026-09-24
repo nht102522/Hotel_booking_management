@@ -1,6 +1,9 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatCurrency } from "../../utils/helpers";
+import { deleteCabins } from "../../services/apiCabins";
+
 export const cabinRowClass =
-  "grid grid-cols-[0.6fr_1.8fr_2.2fr_1fr_1fr_1fr] items-center gap-x-[2.4rem] px-[2.4rem] py-[1.4rem] not-last:border-b not-last:border-grey-100";
+  "grid grid-cols-[0.6fr_1.8fr_2.2fr_1fr_1fr_1fr] items-center gap-x-[2.4rem] border-t border-grey-100 px-[2.4rem] py-[1.4rem] transition-none";
 
 export const cabinImageClass =
   "block aspect-[3/2] w-[6.4rem] -translate-x-[7px] scale-150 object-cover object-center";
@@ -12,7 +15,37 @@ export const cabinPriceClass = "font-['Sono'] font-semibold";
 export const cabinDiscountClass = "font-['Sono'] font-medium text-green-700";
 
 function CabinRow({ cabin }) {
-  const { name, maxCapacity, regularPrice, discount, image } = cabin;
+  const {
+    name,
+    maxCapacity,
+    regularPrice,
+    discount,
+    image,
+    id: cabinId,
+  } = cabin;
+  const queryClient = useQueryClient();
+  const { isPending: isDeleting, mutate } = useMutation({
+    mutationFn: deleteCabins,
+    networkMode: "always",
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ["cabins"] });
+
+      const previousCabins = queryClient.getQueryData(["cabins"]);
+
+      queryClient.setQueryData(["cabins"], (cabins = []) =>
+        cabins.filter((cabin) => cabin.id !== id),
+      );
+
+      return { previousCabins };
+    },
+    onError: (error, _id, context) => {
+      queryClient.setQueryData(["cabins"], context?.previousCabins);
+      window.alert(error.message);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["cabins"] });
+    },
+  });
   return (
     <div className={`${cabinRowClass}`}>
       <img className={`${cabinImageClass}`} src={image} />
@@ -20,8 +53,12 @@ function CabinRow({ cabin }) {
       <div>Fits up to {maxCapacity} guests</div>
       <div className={`${cabinPriceClass}`}>{formatCurrency(regularPrice)}</div>
       <div className={`${cabinDiscountClass}`}>{formatCurrency(discount)}</div>
-      <button className="bg-grey-500 hover:bg-grey-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-        Detele
+      <button
+        className="bg-grey-500 hover:bg-grey-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+        onClick={() => mutate(cabinId)}
+        disabled={isDeleting}
+      >
+        Delete
       </button>
     </div>
   );
