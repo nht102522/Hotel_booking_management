@@ -13,6 +13,7 @@ import PageNotFound from "./pages/PageNotFound";
 import AppLayout from "./ui/AppLayout";
 import { Navigate } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,6 +42,17 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <Toaster
+        position="top-center"
+        gutter={12}
+        containerStyle={{ margin: "8px" }}
+        toastOptions={{
+          success: { duration: 2000 },
+          error: { duration: 3000 },
+          className:
+            "text-l max-w-[500px] px-6 py-4 rounded-lg bg-[color:var(--color-grey-0)]",
+        }}
+      />
     </QueryClientProvider>
   );
 }

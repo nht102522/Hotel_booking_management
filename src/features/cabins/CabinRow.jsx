@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatCurrency } from "../../utils/helpers";
 import { deleteCabins } from "../../services/apiCabins";
+import toast from "react-hot-toast";
+
+const TOAST_ID = "app-notification";
 
 export const cabinRowClass =
   "grid grid-cols-[0.6fr_1.8fr_2.2fr_1fr_1fr_1fr] items-center gap-x-[2.4rem] border-t border-grey-100 px-[2.4rem] py-[1.4rem] transition-none";
@@ -38,9 +41,12 @@ function CabinRow({ cabin }) {
 
       return { previousCabins };
     },
+    onSuccess: () => {
+      toast.success("Cabin successfully deleted", { id: TOAST_ID });
+    },
     onError: (error, _id, context) => {
       queryClient.setQueryData(["cabins"], context?.previousCabins);
-      window.alert(error.message);
+      toast.error(error.message, { id: TOAST_ID });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["cabins"] });
