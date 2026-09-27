@@ -4,76 +4,112 @@ import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
-const formRowClass =
-  "grid grid-cols-[24rem_1fr_1.2fr] items-center gap-[2.4rem] py-[1.2rem] first:pt-0 last:pb-0 not-last:border-b not-last:border-grey-100 has-[button]:flex has-[button]:justify-end has-[button]:gap-[1.2rem]";
+import { createCabin } from "../../services/apiCabins";
+import FormRow from "../../ui/FormRow";
 
 function CreateCabinForm() {
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm();
+  const queryClient = useQueryClient();
+  const { mutate, isLoading: isCreating } = useMutation({
+    mutationFn: createCabin,
+    onSuccess: () => {
+      toast.success("Cabin successfully created");
+      queryClient.invalidateQueries({ queryKey: ["cabins"] });
+      reset();
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
   function onSubmit(data) {
-    console.log(data);
-    reset();
+    mutate(data);
   }
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <div className={formRowClass}>
-        <label className="font-medium" htmlFor="name">
-          Cabin name
-        </label>
-        <Input type="text" id="name" {...register("name")} />
-      </div>
-
-      <div className={formRowClass}>
-        <label className="font-medium" htmlFor="maxCapacity">
-          Maximum capacity
-        </label>
-        <Input type="number" id="maxCapacity" {...register("maxCapacity")} />
-      </div>
-
-      <div className={formRowClass}>
-        <label className="font-medium" htmlFor="regularPrice">
-          Regular price
-        </label>
-        <Input type="number" id="regularPrice" {...register("regularPrice")} />
-      </div>
-
-      <div className={formRowClass}>
-        <label className="font-medium" htmlFor="discount">
-          Discount
-        </label>
+      <FormRow label="Cabin Name" error={errors.name}>
+        {" "}
         <Input
+          type="text"
+          id="name"
+          {...register("name", { required: "This field is required" })}
+        />
+      </FormRow>
+
+      <FormRow label="Maximum capacity" error={errors.maxCapacity}>
+        <input
+          type="number"
+          id="maxCapacity"
+          className="rounded-md border border-grey-200 px-3 py-2"
+          {...register("maxCapacity", {
+            required: "This field is required",
+            min: {
+              value: 1,
+              message: "Capacity should be at least 1",
+            },
+          })}
+        />
+      </FormRow>
+
+      <FormRow label="Regular price" error={errors.regularPrice}>
+        <input
+          type="number"
+          id="regularPrice"
+          className="rounded-md border border-grey-200 px-3 py-2"
+          {...register("regularPrice", {
+            required: "This field is required",
+            min: {
+              value: 1,
+              message: "Price should be at least 1",
+            },
+          })}
+        />
+      </FormRow>
+
+      <FormRow label="Discount" error={errors.discount}>
+        <input
           type="number"
           id="discount"
           defaultValue={0}
-          {...register("discount")}
+          className="rounded-md border border-grey-200 px-3 py-2"
+          {...register("discount", {
+            validate: (value) =>
+              Number(value) <= Number(getValues().regularPrice) ||
+              "Discount should be less than the regular price",
+          })}
         />
-      </div>
+      </FormRow>
 
-      <div className={formRowClass}>
-        <label className="font-medium" htmlFor="description">
-          Description for website
-        </label>
+      <FormRow label="Description for website" error={errors.description}>
         <Textarea
-          type="number"
           id="description"
           defaultValue=""
-          {...register("description")}
+          {...register("description", {
+            required: "This field is required",
+          })}
         />
-      </div>
+      </FormRow>
 
-      <div className={formRowClass}>
-        <label className="font-medium" htmlFor="image">
-          Cabin photo
-        </label>
+      <FormRow label="Cabin photo" error={errors.image}>
         <FileInput id="image" accept="image/*" />
-      </div>
+      </FormRow>
 
-      <div className={formRowClass}>
-        {/* type is an HTML attribute! */}
+      <div className="flex justify-end gap-[1.2rem] pt-[1.2rem]">
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>Edit cabin</Button>
+
+        <Button type="submit" disabled={isCreating}>
+          {isCreating ? "Creating..." : "Add cabin"}
+        </Button>
       </div>
     </Form>
   );
