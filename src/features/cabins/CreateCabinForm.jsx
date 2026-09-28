@@ -1,14 +1,15 @@
+import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import FormRow from "../../ui/FormRow";
 
 import { createCabin } from "../../services/apiCabins";
-import FormRow from "../../ui/FormRow";
 
 function CreateCabinForm() {
   const {
@@ -31,7 +32,7 @@ function CreateCabinForm() {
     },
   });
   function onSubmit(data) {
-    mutate(data);
+    mutate({ ...data, image: data.image[0] });
   }
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -99,7 +100,11 @@ function CreateCabinForm() {
       </FormRow>
 
       <FormRow label="Cabin photo" error={errors.image}>
-        <FileInput id="image" accept="image/*" />
+        <FileInput
+          id="image"
+          accept="image/*"
+          {...register("image", { required: "Please choose a cabin photo" })}
+        />
       </FormRow>
 
       <div className="flex justify-end gap-[1.2rem] pt-[1.2rem]">

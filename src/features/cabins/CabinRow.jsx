@@ -1,7 +1,9 @@
+import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatCurrency } from "../../utils/helpers";
 import { deleteCabins } from "../../services/apiCabins";
-import toast from "react-hot-toast";
+import { useState } from "react";
+import CreateCabinForm from "./CreateCabinForm";
 
 const TOAST_ID = "app-notification";
 
@@ -18,6 +20,7 @@ export const cabinPriceClass = "font-['Sono'] font-semibold";
 export const cabinDiscountClass = "font-['Sono'] font-medium text-green-700";
 
 function CabinRow({ cabin }) {
+  const [showForm, setShowForm] = useState(false);
   const {
     name,
     maxCapacity,
@@ -53,20 +56,36 @@ function CabinRow({ cabin }) {
     },
   });
   return (
-    <div className={`${cabinRowClass}`}>
-      <img className={`${cabinImageClass}`} src={image} />
-      <div className={`${cabinNameClass}`}>{name}</div>
-      <div>Fits up to {maxCapacity} guests</div>
-      <div className={`${cabinPriceClass}`}>{formatCurrency(regularPrice)}</div>
-      <div className={`${cabinDiscountClass}`}>{formatCurrency(discount)}</div>
-      <button
-        className="bg-grey-500 hover:bg-grey-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-        onClick={() => mutate(cabinId)}
-        disabled={isDeleting}
-      >
-        Delete
-      </button>
-    </div>
+    <>
+      <div className={`${cabinRowClass}`}>
+        <img className={`${cabinImageClass}`} src={image} />
+        <div className={`${cabinNameClass}`}>{name}</div>
+        <div>Fits up to {maxCapacity} guests</div>
+        <div className={`${cabinPriceClass}`}>
+          {formatCurrency(regularPrice)}
+        </div>
+        <div className={`${cabinDiscountClass}`}>
+          {formatCurrency(discount)}
+        </div>
+
+        <div>
+          <button
+            className="bg-grey-500 hover:bg-grey-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+            onClick={() => setShowForm((show) => !show)}
+          >
+            Edit
+          </button>
+          <button
+            className="bg-grey-500 hover:bg-grey-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+            onClick={() => mutate(cabinId)}
+            disabled={isDeleting}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+      {showForm && <CreateCabinForm cabinToEdit={cabin} />}
+    </>
   );
 }
 
