@@ -9,14 +9,26 @@ export async function getCabins() {
   return data;
 }
 export async function createAndEditCabin(newCabin, id) {
-  let imageValue = newCabin.image;
+  const hasId = id !== undefined && id !== null;
+
+  if (hasId && typeof id === "object") {
+    throw new Error("Invalid cabin id");
+  }
+
+  const rawImage = newCabin.image;
+  const imageFile =
+    rawImage instanceof File
+      ? rawImage
+      : rawImage && rawImage[0] instanceof File
+        ? rawImage[0]
+        : null;
+
+  let imageValue = typeof rawImage === "string" ? rawImage : imageFile;
 
   const hasExistingImageUrl =
     typeof imageValue === "string" && imageValue.startsWith(supabaseUrl);
 
-  if (hasExistingImageUrl) {
-    imageValue = imageValue;
-  } else if (imageValue && imageValue.name) {
+  if (!hasExistingImageUrl && imageValue && imageValue.name) {
     const safeFileName = imageValue.name
       .trim()
       .replace(/\s+/g, "-")
@@ -34,15 +46,23 @@ export async function createAndEditCabin(newCabin, id) {
     }
 
     imageValue = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
-  } else if (!id) {
+  } else if (!hasExistingImageUrl && !hasId) {
     throw new Error("Please select a cabin image");
   }
 
+  const safeCabinData = {
+    ...newCabin,
+    maxCapacity: Number(newCabin.maxCapacity ?? 0),
+    regularPrice: Number(newCabin.regularPrice ?? 0),
+    discount: Number(newCabin.discount ?? 0),
+    image: typeof rawImage === "string" ? rawImage : imageValue,
+  };
+
   let query = supabase.from("cabins");
 
-  if (id) {
+  if (hasId) {
     const { data, error } = await query
-      .update({ ...newCabin, image: imageValue })
+      .update(safeCabinData)
       .eq("id", id)
       .select();
 
@@ -54,9 +74,7 @@ export async function createAndEditCabin(newCabin, id) {
     return data[0];
   }
 
-  const { data, error } = await query
-    .insert([{ ...newCabin, image: imageValue }])
-    .select();
+  const { data, error } = await query.insert([safeCabinData]).select();
 
   if (error) {
     console.log(error);
@@ -66,6 +84,13 @@ export async function createAndEditCabin(newCabin, id) {
   return data[0];
 }
 export async function deleteCabins(id) {
+  if (
+    (typeof id !== "number" && typeof id !== "string") ||
+    String(id).trim() === ""
+  ) {
+    throw new Error("Invalid cabin id");
+  }
+
   const { data, error } = await supabase.from("cabins").delete().eq("id", id);
   if (error) {
     console.log(error);

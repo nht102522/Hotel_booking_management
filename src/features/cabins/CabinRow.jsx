@@ -1,11 +1,8 @@
-import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatCurrency } from "../../utils/helpers";
-import { deleteCabins } from "../../services/apiCabins";
+
 import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm";
-
-const TOAST_ID = "app-notification";
+import useDeleteCabin from "./useDeleteCabin";
 
 export const cabinRowClass =
   "grid grid-cols-[0.6fr_1.8fr_2.2fr_1fr_1fr_1fr] items-center gap-x-[2.4rem] border-t border-grey-100 px-[2.4rem] py-[1.4rem] transition-none";
@@ -21,6 +18,7 @@ export const cabinDiscountClass = "font-['Sono'] font-medium text-green-700";
 
 function CabinRow({ cabin }) {
   const [showForm, setShowForm] = useState(false);
+  const { isDeleting, deleteCabin } = useDeleteCabin();
   const {
     name,
     maxCapacity,
@@ -29,32 +27,7 @@ function CabinRow({ cabin }) {
     image,
     id: cabinId,
   } = cabin;
-  const queryClient = useQueryClient();
-  const { isPending: isDeleting, mutate } = useMutation({
-    mutationFn: deleteCabins,
-    networkMode: "always",
-    onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: ["cabins"] });
 
-      const previousCabins = queryClient.getQueryData(["cabins"]);
-
-      queryClient.setQueryData(["cabins"], (cabins = []) =>
-        cabins.filter((cabin) => cabin.id !== id),
-      );
-
-      return { previousCabins };
-    },
-    onSuccess: () => {
-      toast.success("Cabin successfully deleted", { id: TOAST_ID });
-    },
-    onError: (error, _id, context) => {
-      queryClient.setQueryData(["cabins"], context?.previousCabins);
-      toast.error(error.message, { id: TOAST_ID });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-    },
-  });
   return (
     <>
       <div className={`${cabinRowClass}`}>
@@ -64,9 +37,13 @@ function CabinRow({ cabin }) {
         <div className={`${cabinPriceClass}`}>
           {formatCurrency(regularPrice)}
         </div>
-        <div className={`${cabinDiscountClass}`}>
-          {formatCurrency(discount)}
-        </div>
+        {discount ? (
+          <div className={`${cabinDiscountClass}`}>
+            {formatCurrency(discount)}
+          </div>
+        ) : (
+          <span>&mdash;</span>
+        )}
 
         <div>
           <button
@@ -77,7 +54,7 @@ function CabinRow({ cabin }) {
           </button>
           <button
             className="bg-grey-500 hover:bg-grey-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-            onClick={() => mutate(cabinId)}
+            onClick={() => deleteCabin(cabinId)}
             disabled={isDeleting}
           >
             Delete

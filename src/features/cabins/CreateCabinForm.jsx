@@ -1,6 +1,5 @@
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
@@ -9,9 +8,18 @@ import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 
-import { createAndEditCabin } from "../../services/apiCabins";
+import useCreateCabin from "./useCreateCabin";
+import useEditCabin from "./useEditCabin";
 
 function CreateCabinForm({ cabinToEdit = {} }) {
+  //-----
+  const { isCreating, createCabin } = useCreateCabin();
+
+  //-----
+  //-----
+  const { isEditing, editCabin } = useEditCabin();
+  //--------
+  const isWorking = isCreating || isEditing;
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
   const {
@@ -21,47 +29,38 @@ function CreateCabinForm({ cabinToEdit = {} }) {
     getValues,
     formState: { errors },
   } = useForm({ defaultValues: isEditSession ? editValues : {} });
-  const queryClient = useQueryClient();
-  const { mutate: creatCabin, isLoading: isCreating } = useMutation({
-    mutationFn: createAndEditCabin,
-    onSuccess: () => {
-      toast.success("Cabin successfully created");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset();
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-  const { mutate: editCabin, isLoading: isEditing } = useMutation({
-    mutationFn: ({ newCabinData, id }) => createAndEditCabin(newCabinData, id),
-    onSuccess: () => {
-      toast.success("Cabin successfully edited");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset();
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-  const isWorking = isCreating || isEditing;
 
   function handleNumberInputWheel(event) {
-    event.preventDefault();
-    event.target.blur();
+    event.currentTarget.blur();
   }
 
   function onSubmit(data) {
+    const rawImage = data.image;
     const image =
-      typeof data.image === "string"
-        ? data.image
-        : (data.image?.[0] ?? cabinToEdit.image);
+      typeof rawImage === "string"
+        ? rawImage
+        : rawImage instanceof File
+          ? rawImage
+          : (rawImage?.[0] ?? cabinToEdit.image);
+
+    const normalizedData = {
+      ...data,
+      maxCapacity: Number(data.maxCapacity ?? 0),
+      regularPrice: Number(data.regularPrice ?? 0),
+      discount: Number(data.discount ?? 0),
+    };
 
     if (isEditSession) {
-      editCabin({
-        newCabinData: { ...data, image: image ?? cabinToEdit.image },
-        id: editId,
-      });
+      editCabin(
+        {
+          newCabinData: {
+            ...normalizedData,
+            image: image ?? cabinToEdit.image,
+          },
+          id: editId,
+        },
+        { onSuccess: (data) => reset() },
+      );
       return;
     }
 
@@ -70,7 +69,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
       return;
     }
 
-    creatCabin({ ...data, image });
+    createCabin({ ...normalizedData, image }, { onSuccess: (data) => reset() });
   }
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
