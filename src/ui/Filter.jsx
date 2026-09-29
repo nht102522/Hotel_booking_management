@@ -1,3 +1,5 @@
+import { useSearchParams } from "react-router-dom";
+
 const filterClass =
   "flex gap-[0.4rem] rounded-[var(--border-radius-sm)] border border-grey-100 bg-grey-0 p-[0.4rem] shadow-[var(--shadow-sm)]";
 
@@ -7,13 +9,33 @@ const buttonClass =
 function FilterButton({ active, className = "", ...props }) {
   return (
     <button
-      className={`${buttonClass} ${active ? "bg-brand-600 text-brand-50" : "bg-grey-0"} ${className}`}
+      type="button"
+      className={`${buttonClass} ${
+        active ? "bg-brand-600 text-brand-50" : "bg-grey-0"
+      } ${className}`}
       {...props}
     />
   );
 }
 
-function Filter({ filterField, options = [], currentFilter, onFilter }) {
+function Filter({ filterField, options = [] }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentFilter =
+    searchParams.get(filterField) || options[0]?.value || "";
+
+  function handleClick(value) {
+    const nextSearchParams = new URLSearchParams(searchParams);
+
+    nextSearchParams.set(filterField, value);
+
+    if (nextSearchParams.has("page")) {
+      nextSearchParams.set("page", "1");
+    }
+
+    setSearchParams(nextSearchParams);
+  }
+
   return (
     <div className={filterClass}>
       {options.map((option) => (
@@ -21,7 +43,7 @@ function Filter({ filterField, options = [], currentFilter, onFilter }) {
           key={option.value}
           active={option.value === currentFilter}
           disabled={option.value === currentFilter}
-          onClick={() => onFilter?.(filterField, option.value)}
+          onClick={() => handleClick(option.value)}
         >
           {option.label}
         </FilterButton>
