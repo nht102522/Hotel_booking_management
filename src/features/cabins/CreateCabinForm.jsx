@@ -11,7 +11,7 @@ import FormRow from "../../ui/FormRow";
 import useCreateCabin from "./useCreateCabin";
 import useEditCabin from "./useEditCabin";
 
-function CreateCabinForm({ cabinToEdit = {} }) {
+function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   //-----
   const { isCreating, createCabin } = useCreateCabin();
 
@@ -59,7 +59,12 @@ function CreateCabinForm({ cabinToEdit = {} }) {
           },
           id: editId,
         },
-        { onSuccess: (data) => reset() },
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        },
       );
       return;
     }
@@ -69,10 +74,21 @@ function CreateCabinForm({ cabinToEdit = {} }) {
       return;
     }
 
-    createCabin({ ...normalizedData, image }, { onSuccess: (data) => reset() });
+    createCabin(
+      { ...normalizedData, image },
+      {
+        onSuccess: () => {
+          reset();
+          onCloseModal?.();
+        },
+      },
+    );
   }
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form
+      type={onCloseModal ? "modal" : undefined}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <FormRow label="Cabin Name" error={errors.name}>
         {" "}
         <Input
@@ -155,7 +171,11 @@ function CreateCabinForm({ cabinToEdit = {} }) {
       </FormRow>
 
       <div className="flex justify-end gap-[1.2rem] pt-[1.2rem]">
-        <Button variation="secondary" type="reset">
+        <Button
+          variation="secondary"
+          type="reset"
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
 
