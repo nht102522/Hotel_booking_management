@@ -1,8 +1,13 @@
-import Table from "../../ui/Table";
+import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
+
+import ConfirmDelete from "../../ui/ConfirmDelete";
+import Menus from "../../ui/Menus";
 import Modal from "../../ui/Modal";
+import Table from "../../ui/Table";
 import { formatCurrency } from "../../utils/helpers";
 
 import CreateCabinForm from "./CreateCabinForm";
+import useCreateCabin from "./useCreateCabin";
 import useDeleteCabin from "./useDeleteCabin";
 
 const cabinImageClass =
@@ -17,6 +22,7 @@ const cabinDiscountClass = "font-['Sono'] font-medium text-green-700";
 
 function CabinRow({ cabin }) {
   const { isDeleting, deleteCabin } = useDeleteCabin();
+  const { isCreating, createCabin } = useCreateCabin();
 
   const {
     id: cabinId,
@@ -25,7 +31,19 @@ function CabinRow({ cabin }) {
     regularPrice,
     discount,
     image,
+    description,
   } = cabin;
+
+  function handleDuplicate() {
+    createCabin({
+      name: `Copy of ${name}`,
+      maxCapacity,
+      regularPrice,
+      discount,
+      image,
+      description,
+    });
+  }
 
   return (
     <Table.Row>
@@ -43,30 +61,42 @@ function CabinRow({ cabin }) {
         <span>&mdash;</span>
       )}
 
-      <div className="flex gap-[0.8rem]">
+      <div>
         <Modal>
-          <Modal.Open opens="edit">
-            <button
-              type="button"
-              className="rounded-lg bg-grey-500 px-4 py-2 font-medium text-white transition-colors hover:bg-grey-700"
-            >
-              Edit
-            </button>
-          </Modal.Open>
+          <Menus.Menu>
+            <Menus.Toggle id={cabinId} />
 
-          <Modal.Window name="edit">
-            <CreateCabinForm cabinToEdit={cabin} />
-          </Modal.Window>
+            <Menus.List id={cabinId}>
+              <Menus.Button
+                icon={<HiSquare2Stack />}
+                onClick={handleDuplicate}
+                disabled={isCreating}
+              >
+                Duplicate
+              </Menus.Button>
+
+              <Modal.Open opens="edit">
+                <Menus.Button icon={<HiPencil />}>Edit</Menus.Button>
+              </Modal.Open>
+
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
+              </Modal.Open>
+            </Menus.List>
+
+            <Modal.Window name="edit">
+              <CreateCabinForm cabinToEdit={cabin} />
+            </Modal.Window>
+
+            <Modal.Window name="delete">
+              <ConfirmDelete
+                resourceName="cabin"
+                disabled={isDeleting}
+                onConfirm={() => deleteCabin(cabinId)}
+              />
+            </Modal.Window>
+          </Menus.Menu>
         </Modal>
-
-        <button
-          type="button"
-          className="rounded-lg bg-grey-500 px-4 py-2 font-medium text-white transition-colors hover:bg-grey-700 disabled:cursor-not-allowed"
-          onClick={() => deleteCabin(cabinId)}
-          disabled={isDeleting}
-        >
-          Delete
-        </button>
       </div>
     </Table.Row>
   );
