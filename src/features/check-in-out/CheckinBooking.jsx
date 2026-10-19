@@ -5,24 +5,29 @@ import Heading from "../../ui/Heading";
 import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
+import Empty from "../../ui/Empty";
+import Spinner from "../../ui/Spinner";
+import useBooking from "../bookings/useBooking";
 
 import { useMoveBack } from "../../hooks/useMoveBack";
 
 function CheckinBooking() {
   const moveBack = useMoveBack();
+  const { booking, isPending, error } = useBooking();
 
-  const booking = {};
+  if (isPending) return <Spinner />;
 
-  const {
-    id: bookingId,
-    guests,
-    totalPrice,
-    numGuests,
-    hasBreakfast,
-    numNights,
-  } = booking;
+  if (error) {
+    return (
+      <p role="alert" className="text-[1.6rem] text-red-700">
+        Could not load booking: {error.message}
+      </p>
+    );
+  }
 
-  function handleCheckin() {}
+  if (!booking) return <Empty resource="booking" />;
+
+  const { id: bookingId } = booking;
 
   return (
     <>
@@ -34,7 +39,7 @@ function CheckinBooking() {
       <BookingDataBox booking={booking} />
 
       <ButtonGroup>
-        <Button onClick={handleCheckin}>Check in booking #{bookingId}</Button>
+        <Button disabled>Check in booking #{bookingId}</Button>
         <Button variation="secondary" onClick={moveBack}>
           Back
         </Button>

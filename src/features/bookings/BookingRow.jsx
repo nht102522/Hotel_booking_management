@@ -1,5 +1,6 @@
 import { format, isToday } from "date-fns";
-import { HiEye, HiTrash } from "react-icons/hi2";
+
+import { HiArrowDownOnSquare, HiEye, HiTrash } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 
@@ -75,6 +76,14 @@ function BookingRow({
             >
               See details
             </Menus.Button>
+            {status === "unconfirmed" && (
+              <Menus.Button
+                icon={<HiArrowDownOnSquare />}
+                onClick={() => navigate(`/checkin/${bookingId}`)}
+              >
+                Check in
+              </Menus.Button>
+            )}
 
             <Modal.Open opens="delete">
               <Menus.Button icon={<HiTrash />}>Delete booking</Menus.Button>
