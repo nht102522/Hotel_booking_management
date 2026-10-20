@@ -3,6 +3,7 @@ import useCabins from "../cabins/useCabins";
 import Stats from "./Stats";
 import { useRecentBookings } from "./useRecentBookings";
 import { useRecentStays } from "./useRecentStays";
+import TodayActivity from "../check-in-out/TodayActivity";
 export const dashboardLayoutClass =
   "grid grid-cols-4 grid-rows-[auto_34rem_auto] gap-[2.4rem]";
 function DashboardLayout() {
@@ -41,6 +42,7 @@ function DashboardLayout() {
         numDays={numDays}
         cabinCount={cabins.length}
       />
+      <TodayActivity />
     </div>
   );
 }

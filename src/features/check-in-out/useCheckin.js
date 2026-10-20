@@ -21,6 +21,8 @@ export function useCheckin() {
 
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       queryClient.invalidateQueries({ queryKey: ["booking"] });
+      queryClient.invalidateQueries({ queryKey: ["stays"] });
+      queryClient.invalidateQueries({ queryKey: ["today-activity"] });
 
       navigate("/bookings");
     },

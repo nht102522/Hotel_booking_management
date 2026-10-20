@@ -17,6 +17,8 @@ export function useCheckout() {
 
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       queryClient.invalidateQueries({ queryKey: ["booking"] });
+      queryClient.invalidateQueries({ queryKey: ["stays"] });
+      queryClient.invalidateQueries({ queryKey: ["today-activity"] });
     },
 
     onError: (error) => toast.error(error.message),

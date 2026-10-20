@@ -12,11 +12,21 @@ import { Flag } from "../../ui/Flag";
 import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
 
 function StyledBookingDataBox(props) {
-  return <section className="overflow-hidden rounded-[var(--border-radius-md)] border border-grey-100 bg-grey-0" {...props} />;
+  return (
+    <section
+      className="overflow-hidden rounded-[var(--border-radius-md)] border border-grey-100 bg-grey-0"
+      {...props}
+    />
+  );
 }
 
 function Header(props) {
-  return <header className="flex items-center justify-between bg-brand-500 px-[4rem] py-[2rem] text-[1.8rem] font-medium text-indigo-100 [&>div:first-child]:flex [&>div:first-child]:items-center [&>div:first-child]:gap-[1.6rem] [&>div:first-child]:text-[1.8rem] [&>div:first-child]:font-semibold [&_span]:ml-[4px] [&_span]:font-['Sono'] [&_span]:text-[2rem] [&_svg]:h-[3.2rem] [&_svg]:w-[3.2rem]" {...props} />;
+  return (
+    <header
+      className="flex items-center justify-between bg-brand-500 px-[4rem] py-[2rem] text-[1.8rem] font-medium text-indigo-100 [&>div:first-child]:flex [&>div:first-child]:items-center [&>div:first-child]:gap-[1.6rem] [&>div:first-child]:text-[1.8rem] [&>div:first-child]:font-semibold [&_span]:ml-[4px] [&_span]:font-['Sono'] [&_span]:text-[2rem] [&_svg]:h-[3.2rem] [&_svg]:w-[3.2rem]"
+      {...props}
+    />
+  );
 }
 
 function Section(props) {
@@ -24,7 +34,12 @@ function Section(props) {
 }
 
 function Guest(props) {
-  return <div className="mb-[1.6rem] flex items-center gap-[1.2rem] text-grey-500 [&_p:first-of-type]:font-medium [&_p:first-of-type]:text-grey-700" {...props} />;
+  return (
+    <div
+      className="mb-[1.6rem] flex items-center gap-[1.2rem] text-grey-500 [&_p:first-of-type]:font-medium [&_p:first-of-type]:text-grey-700"
+      {...props}
+    />
+  );
 }
 
 function Price({ isPaid, ...props }) {
@@ -37,7 +52,12 @@ function Price({ isPaid, ...props }) {
 }
 
 function Footer(props) {
-  return <footer className="px-[4rem] py-[1.6rem] text-right text-[1.2rem] text-grey-500" {...props} />;
+  return (
+    <footer
+      className="px-[4rem] py-[1.6rem] text-right text-[1.2rem] text-grey-500"
+      {...props}
+    />
+  );
 }
 
 // A purely presentational component
@@ -54,7 +74,13 @@ function BookingDataBox({ booking }) {
     hasBreakfast,
     observations,
     isPaid,
-    guests: { fullName: guestName, email, country, countryFlag, nationalID },
+    guests: {
+      fullName: guestName,
+      email,
+      nationality,
+      countryFlag,
+      nationalID,
+    },
     cabins: { name: cabinName },
   } = booking;
 
@@ -79,7 +105,9 @@ function BookingDataBox({ booking }) {
 
       <Section>
         <Guest>
-          {countryFlag && <Flag src={countryFlag} alt={`Flag of ${country}`} />}
+          {countryFlag && (
+            <Flag src={countryFlag} alt={`Flag of ${nationality}`} />
+          )}
           <p>
             {guestName} {numGuests > 1 ? `+ ${numGuests - 1} guests` : ""}
           </p>
@@ -108,7 +136,7 @@ function BookingDataBox({ booking }) {
 
             {hasBreakfast &&
               ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
-                extrasPrice
+                extrasPrice,
               )} breakfast)`}
           </DataItem>
 
