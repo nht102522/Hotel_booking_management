@@ -9,6 +9,7 @@ import {
 } from "recharts";
 
 import Heading from "../../ui/Heading";
+import { useDarkMode } from "../../context/DarkModeContext";
 
 const ChartBox = styled.div`
   /* Box */
@@ -142,8 +143,7 @@ function prepareData(startData, stays) {
 }
 
 function DurationChart({ confirmedStays }) {
-  // Temporary until we create the dark-mode feature.
-  const isDarkMode = false;
+  const { isDarkMode } = useDarkMode();
 
   const startData = isDarkMode ? startDataDark : startDataLight;
   const data = prepareData(startData, confirmedStays);

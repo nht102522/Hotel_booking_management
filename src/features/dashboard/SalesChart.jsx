@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import DashboardBox from "./DashboardBox";
 import Heading from "../../ui/Heading";
+import { useDarkMode } from "../../context/DarkModeContext";
 
 const StyledSalesChart = styled(DashboardBox)`
   grid-column: 1 / -1;
@@ -22,6 +23,8 @@ const StyledSalesChart = styled(DashboardBox)`
   }
 `;
 function SalesChart({ bookings, numDays }) {
+  const { isDarkMode } = useDarkMode();
+
   const allDates = eachDayOfInterval({
     start: subDays(new Date(), numDays - 1),
     end: new Date(),
@@ -45,12 +48,19 @@ function SalesChart({ bookings, numDays }) {
     };
   });
 
-  const colors = {
-    totalSales: { stroke: "#4f46e5", fill: "#c7d2fe" },
-    extrasSales: { stroke: "#16a34a", fill: "#dcfce7" },
-    text: "#374151",
-    background: "#fff",
-  };
+  const colors = isDarkMode
+    ? {
+        totalSales: { stroke: "#818cf8", fill: "#4f46e5" },
+        extrasSales: { stroke: "#4ade80", fill: "#15803d" },
+        text: "#e5e7eb",
+        background: "#18212f",
+      }
+    : {
+        totalSales: { stroke: "#4f46e5", fill: "#c7d2fe" },
+        extrasSales: { stroke: "#16a34a", fill: "#dcfce7" },
+        text: "#374151",
+        background: "#fff",
+      };
 
   return (
     <StyledSalesChart>
